@@ -4,16 +4,16 @@ import os
 #import errno
 import json
 
-#faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
-cap = cv2.VideoCapture('test_k5.AVI')
+faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
+cap = cv2.VideoCapture('test.mp4')
 font = cv2.FONT_HERSHEY_SIMPLEX
-#drawing = True # if mouse is pressed, do not draw the box
+drawing = True # if mouse is pressed, do not draw the box
 
 init_x,init_y = -1,-1 # temp buffer to store init x,y position of mouse
 mouse_pos = [] # store the mouse position
 
 to_save = False # a flag to indicate whether to save the image
-f_lapse = 15 # indicate number of frames between two output img to be saved
+f_lapse = 30 # indicate number of frames between two output img to be saved
 f_count = 0  # work with f_lapse to ignore frames within every f_lapse ones
 n_frame = 0 # count the number of extracted image
 to_show = True # indicate whether or not to show the image
@@ -45,18 +45,18 @@ def extract(boxes,n):
 
 while (cap.isOpened()):
     ret, frame = cap.read()
-#    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-#    faces = faceCascade.detectMultiScale(
-#        gray,
-#        #scaleFactor=1.1,
-#        minNeighbors=5,
-#        minSize=(30, 30),
-#        flags=cv2.cv.CV_HAAR_SCALE_IMAGE
-#    )
-#     Draw a rectangle around the faces
-#    for (x, y, w, h) in faces:
-#        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-#    # Draw a rectangle around the target area selected by mouse   
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = faceCascade.detectMultiScale(
+        gray,
+        #scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30),
+        flags=cv2.cv.CV_HAAR_SCALE_IMAGE
+    )
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    # Draw a rectangle around the target area selected by mouse   
 
 #   get the binding boxes' coordinates
     preview = []
@@ -72,7 +72,7 @@ while (cap.isOpened()):
     key = cv2.waitKey(10)
     if key == ord('f') or key == ord('F'):
         continue
-    if key == 27:
+    if key == 27 or key == ord('q'):
         break
     if key == ord(' '):
         if not os.path.exists('./preview'):
@@ -110,7 +110,7 @@ while (cap.isOpened()):
     		f.close()
 
 #   extract all the binding box frames
-    if to_save :
+    if to_save:
         f_count += 1
         if f_count >= f_lapse:
             extract(preview,n_frame)
@@ -128,9 +128,9 @@ while (cap.isOpened()):
             cv2.rectangle(frame, (ix,iy),(ix+l,iy+l),(0,255,0),1)       
             cv2.putText(frame,'Binding Box ' + str(i),(ix,iy+l),font,0.5,(0,0,255),1,cv2.CV_AA)
     if to_show :
-        cv2.putText(frame,'space:preview; d / D:delete binding boxes; '+
-                's / S:start/stop to extract bboexs; f:speed up fps; '+ 
-                'w:turn off the image; W:turn on the image' + 
+        cv2.putText(frame,'space: preview; d/D: delete binding boxes; '+
+                's/S: start/stop to extract bboexs; f: speed up fps; '+ 
+                'w: turn off the image; W:turn on the image' + 
                 'c: save the config file; C: read the config file',
                 (0,int(cap.get(4))-5),font,0.5,(0,255,255),1,cv2.CV_AA)
         cv2.imshow('image',frame)
