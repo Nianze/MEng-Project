@@ -9,16 +9,17 @@ import sys
 
 delimeter = '__'
 format_fill = 4  # leading zeroes in sequence number
-faceCascade = cv2.CascadeClassifier("./analysis/face/haarcascade_frontalface_alt.xml")
+faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 def face_detect(frame):
     img = cv2.imread(frame)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = faceCascade.detectMultiScale(gray, 1.3, 5)
-        #scaleFactor=1.1,
-        #minNeighbors=5,
-        #minSize=(30, 30),
-        #flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
+    faces = faceCascade.detectMultiScale(
+        gray, 
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30),
+        flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
     if len(faces) == 0:
         return 0
     return 1
