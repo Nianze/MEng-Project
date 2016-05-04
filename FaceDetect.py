@@ -1,3 +1,4 @@
+# Hahaha! I can use github! >_<
 import os
 import cv2
 import glob
